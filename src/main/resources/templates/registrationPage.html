@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration page</title>
+</head>
+<body>
+<div>
+    <h1>Login</h1>
+    <form id="registrationForm" method="post" action="#" th:action="@{/registration}" th:object="${personForm}">
+        <p>Name:</p>
+        <input id="inputName" th:field="*{name}" type="text">
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+        <p>Surname:</p>
+        <input id="inputSurname" th:field="*{surname}" type="text">
+        <span th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></span>
+        <p>Username:</p>
+        <input id="inputUsername" th:field="*{username}" type="text">
+        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        <p>Password:</p>
+        <input id="inputPassword" th:field="*{password}" type="password">
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        <p>Check password:</p>
+        <input id="checkPassword" type="password">
+        <input id="submitForm" type="submit" value="Send" disabled>
+        <p>If you are not yet registered <a href="/registration">Click here</a></p>
+    </form>
+</div>
+</body>
+</html>
+
+<script>
+    let click1 = false;
+    let click2 = false;
+    document.getElementById("inputPassword").addEventListener("input", function () {
+        click1 = true;
+        checkPassword();
+    });
+
+    document.getElementById("checkPassword").addEventListener("input", function() {
+        click2 = true;
+        checkPassword();
+    });
+
+    function checkPassword() {
+        let firstPassword = document.getElementById("inputPassword").value;
+        let secondPassword = document.getElementById("checkPassword").value
+        if (click1 && click2) {
+            if (firstPassword == secondPassword && firstPassword != "" && secondPassword != "") {
+                document.getElementById("submitForm").disabled = false;
+            } else {
+                document.getElementById("submitForm").disabled = true;
+            }
+        }
+    }
+</script>

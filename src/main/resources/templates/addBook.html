@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add book</title>
+</head>
+<body>
+  <div>
+    <h1>Add book</h1>
+    <form method="post" action="#" th:action="@{/addbook}" th:object="${book}">
+      <p>Username:</p>
+      <input id="inputTitle" th:field="*{title}" type="text">
+      <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+      <p>Password:</p>
+      <input id="inputAuthor" th:field="*{author}" type="text">
+      <span th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></span>
+      <input id="inputDate" th:field="*{isbn}" type="date">
+      <span th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></span>
+      <input id="inputPrice" th:field="*{price}" type="number" min="0" max="1000000">
+      <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+      <input id="submitForm" type="submit" value="Send">
+      <p>If you are not yet registered <a href="/registration">Click here</a></p>
+    </form>
+  </div>
+</body>
+</html>

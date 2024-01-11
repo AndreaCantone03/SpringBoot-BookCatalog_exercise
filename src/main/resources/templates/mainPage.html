@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+    <link rel="stylesheet" href="/mainPage.css">
+</head>
+<body>
+    <h1 id="titleText">All books</h1>
+    <button id="addBookButton">Add book</button>
+    <div id="bookList" th:each="book : ${allBooks}">
+        <div class="bookCard">
+            <div id="bookRelevantInfo">
+                <h2 th:text="${book.getTitle()}"></h2>
+                <p th:text="${book.getAuthor()}"></p>
+            </div>
+            <p>Released: <span th:text="${book.getDateString()}"></span></p>
+            <p>Price <span th:text="${book.getPrice()}"></span>$</p>
+        </div>
+        <hr>
+    </div>
+</body>
+<script>
+    document.getElementById("addBookButton").addEventListener("click", function() {
+        window.location.assign("/addbook");
+    });
+</script>
+</html>

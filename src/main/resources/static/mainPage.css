@@ -1,0 +1,11 @@
+#titleText {
+    text-align: center;
+}
+
+.bookCard {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
