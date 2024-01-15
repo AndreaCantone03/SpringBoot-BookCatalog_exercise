@@ -7,20 +7,41 @@
 <body>
   <div>
     <h1>Add book</h1>
-    <form method="post" action="#" th:action="@{/addbook}" th:object="${book}">
-      <p>Username:</p>
+    <!--<form method="post" action="#" th:action="@{/addbook}" th:object="${book}">
+      <p>Title:</p>
       <input id="inputTitle" th:field="*{title}" type="text">
       <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
-      <p>Password:</p>
+      <p>Author:</p>
       <input id="inputAuthor" th:field="*{author}" type="text">
       <span th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></span>
+      <p>Isbn:</p>
       <input id="inputDate" th:field="*{isbn}" type="date">
       <span th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}"></span>
+      <p>Price:</p>
       <input id="inputPrice" th:field="*{price}" type="number" min="0" max="1000000">
       <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
       <input id="submitForm" type="submit" value="Send">
       <p>If you are not yet registered <a href="/registration">Click here</a></p>
+    </form>-->
+    <form method="post" action="/addbook">
+      <p>Title:</p>
+      <input id="inputTitle" name="title" type="text">
+      <p>Author:</p>
+      <input id="inputAuthor" name="author" type="text">
+      <p>Isbn:</p>
+      <input id="inputDate" name="date" type="date">
+      <p>Price:</p>
+      <input id="inputPrice" name="price" type="number" min="0" max="1000000">
+      <input id="submitForm" type="submit" value="Send">
     </form>
   </div>
 </body>
+
+<script>
+  const inputDate = document.getElementById("inputDate");
+  inputDate.addEventListener("click", function() {
+    console.log(inputDate.value);
+  });
+</script>
+
 </html>

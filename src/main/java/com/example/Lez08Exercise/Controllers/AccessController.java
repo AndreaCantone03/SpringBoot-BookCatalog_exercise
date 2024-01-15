@@ -1,5 +1,7 @@
-package com.example.Lez08Exercise;
+package com.example.Lez08Exercise.Controllers;
 
+import com.example.Lez08Exercise.Book;
+import com.example.Lez08Exercise.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class AccessController {
-    private ArrayList<PersonForm> personFormArrayList = new ArrayList<PersonForm>(Arrays.asList(new PersonForm("Name", "Surname","Username", "Password"), new PersonForm("John", "Doe", "JohnDoe", "JD")));
+    private ArrayList<User> userArrayList = new ArrayList<User>(Arrays.asList(new User("Name", "Surname","Username", "Password"), new User("John", "Doe", "JohnDoe", "JD")));
     private ArrayList<Cookie> cookies = new ArrayList<Cookie>();
     private ArrayList<Book> books = new ArrayList<Book>(Arrays.asList(
             new Book("Math Book", "Math professor", new Date(2024, Calendar.JANUARY, 10), 10.0f),
@@ -71,76 +73,93 @@ public class AccessController {
         return newCookie;
     }
 
-    @GetMapping(value = "/")
-    public String mainPage(PersonForm personForm, HttpServletRequest request) {
-        if (checkCookieSession(request.getCookies())) return "redirect:/mainpage";
-        for (PersonForm person : personFormArrayList) {
+    @GetMapping(value = "/login")
+    public String mainPage(User user, HttpServletRequest request) {
+        if (checkCookieSession(request.getCookies())) return "redirect:/";
+        for (User person : userArrayList) {
             System.out.println(person.toString());
         }
         return "formPage";
     }
 
-    @PostMapping(value = "/")
-    public String checkPersonInfo(@Valid PersonForm personForm, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
-        if (checkCookieSession(request.getCookies())) return "redirect:/mainpage";
-        System.out.println(personForm.getUsername() + " " + personForm.getPassword());
+    @PostMapping(value = "/login")
+    public String checkPersonInfo(@Valid User user, BindingResult bindingResult, HttpServletResponse response, HttpServletRequest request) {
+        if (checkCookieSession(request.getCookies())) return "redirect:/";
+        System.out.println(user.getUsername() + " " + user.getPassword());
         boolean validCredentials = false;
-        for (PersonForm person : personFormArrayList) {
-            System.out.println("Checking...");
-            if (person.getUsername().equals(personForm.getUsername()) && person.getPassword().equals(personForm.getPassword())) {
+        for (User person : userArrayList) {
+            //System.out.println("Checking...");
+            if (person.getUsername().equals(user.getUsername()) && person.getPassword().equals(user.getPassword())) {
                 validCredentials = true;
                 break;
             }
         }
         if (!validCredentials) if (bindingResult.hasErrors()) return "formPage";
         response.addCookie(addEncryptedCookieSession());
-        return "redirect:/mainpage";
+        return "redirect:/";
     }
 
     @GetMapping(value = "/registration")
-    public String registration(PersonForm personForm, HttpServletRequest request) {
-        if (checkCookieSession(request.getCookies())) return "redirect:/mainpage";
+    public String registration(User user, HttpServletRequest request) {
+        if (checkCookieSession(request.getCookies())) return "redirect:/";
         return "registrationPage";
     }
 
     @PostMapping(value = "/registration")
-    public String addPersonInfo(@Valid PersonForm personForm, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
-        if (checkCookieSession(request.getCookies())) return "redirect:/mainpage";
+    public String addNewPerson(@Valid User user, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
+        if (checkCookieSession(request.getCookies())) return "redirect:/";
         if (bindingResult.hasErrors())
             return "registrationPage";
-        personFormArrayList.add(personForm);
-        System.out.println(personFormArrayList.size());
+        userArrayList.add(user);
+        System.out.println(userArrayList.size());
         response.addCookie(addEncryptedCookieSession());
-        return "redirect:/mainpage";
+        return "redirect:/";
     }
 
-    @GetMapping("/mainpage")
+    @RequestMapping("/")
     public String mainPage(Model model, HttpServletRequest request) {
         System.out.println(Arrays.stream(request.getCookies()).map(c -> {return c.getName() + " " + c.getValue() + " " + c.getSecure() + " " + c.isHttpOnly();}).collect(Collectors.joining(", ")));
-        if (!checkCookieSession(request.getCookies())) return "redirect:/";
+        if (!checkCookieSession(request.getCookies())) return "redirect:/login";
         model.addAttribute("allBooks", books);
         return "mainPage";
     }
 
     @GetMapping("/addbook")
-    public String bookForm(Book book, HttpServletRequest request) {
-        if (!checkCookieSession(request.getCookies())) return "redirect:/";
+    public String bookForm(HttpServletRequest request) {
+        if (!checkCookieSession(request.getCookies())) return "redirect:/login";
+        System.out.println(request);
         return "addBook";
     }
 
     @PostMapping("/addbook")
-    public String addBook(Book book, BindingResult bindingResult, HttpServletRequest request) {
-        if (!checkCookieSession(request.getCookies())) return "redirect:/";
+    public String addBook(@RequestParam("title") String title,
+                          @RequestParam("author") String author,
+                          @RequestParam("date") String date,
+                          @RequestParam("price") float price,
+                          /*BindingResult bindingResult,*/ HttpServletRequest request) {
+        if (!checkCookieSession(request.getCookies())) return "redirect:/login";
+        System.out.println(title+" "+author+" "+" "+price+" "+date);
         boolean thereIsAlready = false;
+        String pageD = date.replace("-", "/");
+        Date d = new Date(pageD);
+        for (Book b:
+             books) {
+            if(b.getTitle().equals(title) && b.getAuthor().equals(author) &&
+            b.getDateString().equals(date) && b.getPrice() == price) thereIsAlready = true; break;
+        }
+        if (!thereIsAlready) {
+            books.add(new Book(title, author, d, price));
+        }
+        /*Book book;
         for (Book b: books) {
             System.out.println("Checking...");
             if (b.getTitle().equals(book.getTitle()) && b.getAuthor().equals(book.getAuthor())) {
                 thereIsAlready = true;
                 break;
             }
-        }
-        if (thereIsAlready || bindingResult.hasErrors()) return "addBook";
-        books.add(book);
-        return "redirect:/mainpage";
+        }*/
+        //if (thereIsAlready || bindingResult.hasErrors()) return "addBook";
+        //books.add(book);
+        return "redirect:/";
     }
 }

@@ -1,9 +1,17 @@
 package com.example.Lez08Exercise;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class PersonForm {
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer ID;
     @NotNull
     @Size(min=1)
     private String name;
@@ -17,11 +25,21 @@ public class PersonForm {
     @Size(min=2, max=30)
     private String password;
 
-    public PersonForm(String name, String surname, String username, String password) {
+    public User() {}
+
+    public User(String name, String surname, String username, String password) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public String getName() {

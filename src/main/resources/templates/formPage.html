@@ -7,7 +7,7 @@
 <body>
     <div>
         <h1>Login</h1>
-        <form method="post" action="#" th:action="@{/}" th:object="${personForm}">
+        <form method="post" action="#" th:action="@{/login}" th:object="${user}">
             <p>Username:</p>
             <input id="inputUsername" th:field="*{username}" type="text">
             <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>

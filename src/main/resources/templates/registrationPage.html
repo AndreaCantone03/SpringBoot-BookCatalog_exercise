@@ -7,7 +7,7 @@
 <body>
 <div>
     <h1>Login</h1>
-    <form id="registrationForm" method="post" action="#" th:action="@{/registration}" th:object="${personForm}">
+    <form id="registrationForm" method="post" action="#" th:action="@{/registration}" th:object="${user}">
         <p>Name:</p>
         <input id="inputName" th:field="*{name}" type="text">
         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
@@ -23,7 +23,6 @@
         <p>Check password:</p>
         <input id="checkPassword" type="password">
         <input id="submitForm" type="submit" value="Send" disabled>
-        <p>If you are not yet registered <a href="/registration">Click here</a></p>
     </form>
 </div>
 </body>
