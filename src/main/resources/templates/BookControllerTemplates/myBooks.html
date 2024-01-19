@@ -7,7 +7,9 @@
 </head>
 <body>
     <h1 id="titleText">All books</h1>
-    <button id="addBookButton">Add book</button>
+    <button id="logOut">Log out</button>
+    <button id="details">User details</button>
+    <button id="homePage">Home page</button>
     <div id="bookList" th:each="book : ${allBooks}">
         <div class="bookCard">
             <div id="bookRelevantInfo">
@@ -21,8 +23,14 @@
     </div>
 </body>
 <script>
-    document.getElementById("addBookButton").addEventListener("click", function() {
-        window.location.assign("/addbook");
+    document.getElementById("logOut").addEventListener("click", function () {
+        window.location.assign("/users/logout");
+    });
+    document.getElementById("details").addEventListener("click", function () {
+        window.location.assign("/users/details");
+    });
+    document.getElementById("homePage").addEventListener("click", function() {
+        window.location.assign("/homepage");
     });
 </script>
 </html>

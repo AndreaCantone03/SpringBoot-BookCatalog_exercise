@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>User details</title>
+</head>
+<body>
+    <div>
+        <button id="logOut">Log out</button>
+        <button id="homePage">Home page</button>
+    </div>
+    <div id="userDetails" th:object="${user}">
+        <p>Name:</p>
+        <p id="pName" th:text="*{name}"></p>
+        <p>Surname:</p>
+        <p id="pSurname" th:text="*{surname}"></p>
+        <p>Username:</p>
+        <p id="pUsername" th:text="*{username}"></p>
+        <p>Password:</p>
+        <p id="pPassword" th:text="*{password}"></p>
+    </div>
+    <button id="changeDetails">Change</button>
+</body>
+<script>
+    document.getElementById("changeDetails").addEventListener("click", function() {
+        window.location.assign("changedetails");
+    });
+    document.getElementById("logOut").addEventListener("click", function () {
+        window.location.assign("/users/logout");
+    });
+    document.getElementById("homePage").addEventListener("click", function() {
+        window.location.assign("/homepage");
+    });
+</script>
+</html>

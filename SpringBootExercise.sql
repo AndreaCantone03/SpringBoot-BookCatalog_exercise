@@ -12,30 +12,30 @@ USE `SpringBootDatabase`;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DROP TABLE IF EXISTS `book`;
+DROP TABLE IF EXISTS `books`;
 
-CREATE TABLE book(
+CREATE TABLE books(
 	`id` integer NOT NULL AUTO_INCREMENT,
 	`title` varchar(40) NOT NULL,
 	`author` varchar(40) NOT NULL,
-	`isbn` date default null,
+	`year` date default null,
 	`price` float NOT NULL,
-    -- `user_id` integer NOT NULL,
-    -- CONSTRAINT userId FOREIGN KEY (user_id) REFERENCES `user`(id),
-	PRIMARY KEY (`id`)
+    `user_id` integer NOT NULL,
+    CONSTRAINT userId FOREIGN KEY (user_id) REFERENCES `user`(id),
+	PRIMARY KEY (id)
 );
 
-INSERT INTO `books` (title, author, isbn, price) VALUES ("Math Book", "Math professor", "2024-01-10", 10.0), ("Italian Book", "Italian professor", "2024-02-05", 10.0);
+INSERT INTO `books` (title, author, `year`, price, user_id) VALUES ("Math Book", "Math professor", "2024-01-10", 10.0, 1), ("Italian Book", "Italian professor", "2024-02-05", 10.0, 2);
 
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `users`;
 
-CREATE TABLE `user`(
+CREATE TABLE `users`(
 	`id` int(20) NOT NULL AUTO_INCREMENT,
-	`name` varchar(20) NOT NULL,
-    `surname` varchar(20) NOT NULL,
-	`username` varchar(20) NOT NULL,
-    `password` varchar(25) NOT NULL,
+	`name` varchar(30) NOT NULL,
+    `surname` varchar(30) NOT NULL,
+	`username` varchar(30) NOT NULL,
+    `password` varchar(30) NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
-INSERT INTO `user` (`name`, surname, username, `password`) VALUES ("Name","Surname","Username","Password"), ("John", "Doe", "JohnDoe", "JD");
+INSERT INTO `users` (`name`, surname, username, `password`) VALUES ("Name","Surname","Username","Password"), ("John", "Doe", "JohnDoe", "JD");

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Login</title>
+</head>
+
+<body>
+    <div>
+        <h1>Login</h1>
+        <form method="post" action="#" th:action="@{/users/login}">
+            <p>Username:</p>
+            <input id="inputUsername" name="username" type="text">
+            <p>Password:</p>
+            <input id="inputPassword" name="password" type="password">
+            <input id="submitForm" type="submit" value="Send">
+            <span th:text="${errText}" style="color: red;"></span>
+            <p>If you are not yet registered <a href="/users/registration">Click here</a></p>
+        </form>
+    </div>
+</body>
+
+</html>

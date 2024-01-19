@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home page</title>
+    <link rel="stylesheet" href="/mainPage.css">
+</head>
+
+<body>
+    <div>
+        <h1>Home page</h1>
+        <button id="logOut">Log out</button>
+        <button id="details">User details</button>
+        <button id="myBooks">My books</button>
+    </div>
+    <div id="viewAllBooks"></div>
+</body>
+
+</html>
+
+<script>
+    document.getElementById("logOut").addEventListener("click", function () {
+        window.location.assign("/users/logout");
+    });
+    document.getElementById("details").addEventListener("click", function () {
+        window.location.assign("/users/details");
+    });
+    document.getElementById("myBooks").addEventListener("click", function () {
+        window.location.assign("/books/mybooks");
+    });
+    fetch("/books/all")
+        .then(response => response.json())
+        .then(json => {
+            console.log(json);
+            insertBooks(json);
+        });
+    function insertBooks(json) {
+        for (const book of json) {
+            const divCard = document.createElement("div");
+            divCard.className = "bookCard";
+            const bookRelevantInfo = document.createElement("div");
+            const title = document.createElement("h2");
+            title.innerText = "Title: " + book.title;
+            const author = document.createElement("p");
+            author.innerText = "Author: " + book.author;
+            const released = document.createElement("p");
+            released.innerText = "Released: " + book.dateString;
+            const price = document.createElement("p");
+            price.innerText = "Price: " + book.price + "€";
+            const hr = document.createElement("hr");
+            bookRelevantInfo.appendChild(title);
+            bookRelevantInfo.appendChild(author);
+            divCard.appendChild(bookRelevantInfo);
+            divCard.appendChild(released);
+            divCard.appendChild(price);
+            document.getElementById("viewAllBooks").appendChild(divCard);
+        }
+    }
+</script>

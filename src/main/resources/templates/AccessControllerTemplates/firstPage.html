@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>First page</title>
+</head>
+<body>
+    <div>
+        <h1>Book shop</h1>
+        <p>Log in or sign up in order to access to the site</p>
+        <button id="logIn">Log in</button>
+        <button id="signUp">Sign up</button>
+    </div>
+</body>
+</html>
+
+<script>
+    document.getElementById("logIn").addEventListener("click", function() {
+        window.location.assign("/users/login");
+    });
+    document.getElementById("signUp").addEventListener("click", function() {
+        window.location.assign("/users/registration");
+    });
+</script>

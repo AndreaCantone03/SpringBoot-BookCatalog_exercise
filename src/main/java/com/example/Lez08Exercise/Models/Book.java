@@ -1,42 +1,49 @@
-package com.example.Lez08Exercise;
+package com.example.Lez08Exercise.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
+@Table(name="books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer ID;
+    private Integer id;
+    @NotBlank
     @NotNull
     @Size(min=1)
     private String title;
+    @NotBlank
     @NotNull
     @Size(min=2)
     private String author;
-    private Date isbn;
+    @NotNull
+    private Date year;
     @NotNull(message = "You must insert a value")
     private float price;
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<User_Book> users_books;
 
-    public Book(String title, String author, Date isbn, float price) {
+    public Book() {}
+
+    public Book(String title, String author, Date year, float price) {
         this.title = title;
         this.author = author;
-        this.isbn = isbn;
+        this.year = year;
         this.price = price;
     }
 
-    public Integer getID() {
-        return ID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -55,16 +62,16 @@ public class Book {
         this.author = author;
     }
 
-    public Date getIsbn() {
-        return isbn;
+    public Date getYear() {
+        return year;
     }
 
     public String getDateString() {
-        return isbn.getYear()+"/"+(isbn.getMonth()+1)+"/"+(isbn.getDate());
+        return year.getYear()+"/"+(year.getMonth()+1)+"/"+(year.getDate());
     }
 
-    public void setIsbn(Date isbn) {
-        this.isbn = isbn;
+    public void setYear(Date year) {
+        this.year = year;
     }
 
     public float getPrice() {
