@@ -11,8 +11,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @SpringBootApplication
 public class Lez08ExerciseApplication implements CommandLineRunner {
@@ -28,6 +30,7 @@ public class Lez08ExerciseApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ITALIAN);
 		Book book = new Book("title", "author", new Date(2024, Calendar.JANUARY, 18), 10);
 		bookRepository.save(book);
 		User user = new User("name", "surname", "username", "pw");
@@ -43,7 +46,7 @@ public class Lez08ExerciseApplication implements CommandLineRunner {
 		User user3 = new User("name3", "surname3", "username3", "pw3");
 		userRepository.save(user3);
 		userBookRepository.save(new User_Book(user3, book3));
-		Book book4 = new Book("title4", "author4", new Date(2024, Calendar.JANUARY, 19), 20);
+		Book book4 = new Book("title4", "author4", formatter.parse("20-01-"+(2024+1900)), 20);
 		bookRepository.save(book4);
 		User user4 = new User("name4", "surname4", "username4", "pw4");
 		userRepository.save(user4);

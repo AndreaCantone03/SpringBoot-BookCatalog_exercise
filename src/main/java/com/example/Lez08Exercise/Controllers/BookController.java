@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/books")
@@ -53,10 +51,57 @@ public class BookController {
 
     @RequestMapping("/availablebooks")
     private @ResponseBody Iterable<Book> allUserBook(HttpSession httpSession) {
-        List<User_Book> user_booksList = (List<User_Book>) userBookRepository.findAll();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALIAN);
+        Gson g = new Gson();
+        try {
+            URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=quilting");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("accept", "application/json");
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStreamReader responseStream = new InputStreamReader(connection.getInputStream());
+                BufferedReader reader = new BufferedReader(responseStream);
+                String jsonResponse;
+                StringBuilder response = new StringBuilder();
+                while ((jsonResponse = reader.readLine()) != null) {
+                    response.append(jsonResponse);
+                }
+                reader.close();
+                System.out.println(response.toString());
+                JsonObject jsonObject = g.fromJson(response.toString(), JsonObject.class);
+                JsonArray jsonArray = jsonObject.getAsJsonArray("items");
+                System.out.println(jsonArray.size());
+                for(JsonElement book : jsonArray) {
+                    try {
+                        JsonObject item = book.getAsJsonObject();
+                        System.out.println(
+                                item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("title").getAsString() + "\n" +
+                                        item.getAsJsonObject("volumeInfo").getAsJsonArray("authors").get(0).getAsString() + "\n" +
+                                        item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("publishedDate").getAsString() + "\n" +
+                                        item.getAsJsonObject("saleInfo").getAsJsonObject("listPrice").getAsJsonPrimitive("amount").getAsFloat()
+                        );
+                        Book newBook = new Book(
+                                item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("title").getAsString(),
+                                item.getAsJsonObject("volumeInfo").getAsJsonArray("authors").get(0).getAsString(),
+                                formatter.parse(item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("publishedDate").getAsString()),
+                                item.getAsJsonObject("saleInfo").getAsJsonObject("listPrice").getAsJsonPrimitive("amount").getAsFloat()
+                        );
+                        if (bookRepository.findByTitle(newBook.getTitle()) == null) bookRepository.save(newBook);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         List<Book> booksList = (List<Book>) bookRepository.findAll();
-        for (Book userBook: bookRepository.findAll()) {
-            if (userBookRepository.findByBook(userBook) != null) booksList.remove(userBook);
+        for (Book userBook: (List<Book>) bookRepository.findAll()) {
+            if (userBookRepository.findByBook(userBook) != null) {
+                if (userBookRepository.findByBook(userBook).getUser().getId() == httpSession.getAttribute("id")){
+                    booksList.remove(userBook);
+                }
+            }
         }
         return booksList;
     }
@@ -83,43 +128,5 @@ public class BookController {
     private String sendForm(Model model, HttpSession httpSession) {
         if (httpSession.getAttribute("id") == null) return "redirect:/";
         return templatePath+"/addBook";
-    }
-
-    @RequestMapping("/availableBooks")
-    private String googleApiRequest() {
-        Gson g = new Gson();
-        try {
-            URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=quilting");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("accept", "application/json");
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                InputStreamReader responseStream = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(responseStream);
-                String jsonResponse;
-                StringBuilder response = new StringBuilder();
-                while ((jsonResponse = reader.readLine()) != null) {
-                    response.append(jsonResponse);
-                }
-                reader.close();
-                System.out.println(response.toString());
-                JsonObject jsonObject = g.fromJson(response.toString(), JsonObject.class);
-                JsonArray jsonArray = jsonObject.getAsJsonArray("items");
-                for(JsonElement book : jsonArray) {
-                    JsonObject item = book.getAsJsonObject();
-                    Book newBook = new Book(
-                            item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("title").getAsString(),
-                            item.getAsJsonObject("volumeInfo").getAsJsonArray("authors").get(0).getAsString(),
-                            new Date(2024, Calendar.JANUARY, 19/*item.getAsJsonObject("volumeInfo").getAsJsonPrimitive("publishedDate").getAsString()*/),
-                            item.getAsJsonObject("saleInfo").getAsJsonObject("listPrice").getAsJsonPrimitive("amount").getAsFloat()
-                    );
-                    bookRepository.save(newBook);
-                    System.out.println(newBook.toString());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "redirect:/";
     }
 }

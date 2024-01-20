@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.ArrayList;
 
 public interface BookRepository extends CrudRepository<Book, Integer> {
+    Book findByTitle(String title);
 }

@@ -13,9 +13,10 @@
         <button id="logOut">Log out</button>
         <button id="details">User details</button>
         <button id="myBooks">My books</button>
+        <button id="availableBooks">Upadte list of available books</button>
     </div>
+    <h2>Available books</h2>
     <div id="viewAllBooks">
-        <h2>All books</h2>
     </div>
 </body>
 
@@ -31,13 +32,21 @@
     document.getElementById("myBooks").addEventListener("click", function () {
         window.location.assign("/books/mybooks");
     });
-    fetch("/books/availablebooks")
+    function updateBooksList() {
+        fetch("/books/availablebooks")
         .then(response => response.json())
         .then(json => {
             console.log(json);
             insertBooks(json);
         });
+    }
+    window.onload = updateBooksList();
+    document.getElementById("availableBooks").addEventListener("click", updateBooksList);
     function insertBooks(json) {
+        let list = document.getElementById("viewAllBooks");
+        while (list.hasChildNodes()) {
+            list.removeChild(list.firstChild);
+        }
         for (const book of json) {
             const divCard = document.createElement("div");
             divCard.className = "bookCard";
@@ -56,8 +65,8 @@
             divCard.appendChild(bookRelevantInfo);
             divCard.appendChild(released);
             divCard.appendChild(price);
-            divCard.appendChild(hr);
-            document.getElementById("viewAllBooks").appendChild(divCard);
+            list.appendChild(divCard);
+            list.appendChild(hr);
         }
     }
 </script>
