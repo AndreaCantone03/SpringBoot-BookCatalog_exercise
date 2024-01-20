@@ -19,7 +19,7 @@ public class UserController {
     String userControllerPath = "users";
 
     boolean checkValidSession(HttpSession httpSession) {
-        return httpSession.getAttribute("id") != null && userRepository.findById((Integer) httpSession.getAttribute("id")).isEmpty();
+        return httpSession.getAttribute("id") == null || userRepository.findById((Integer) httpSession.getAttribute("id")).isEmpty();
     }
 
     @GetMapping(path="/all")
@@ -30,14 +30,14 @@ public class UserController {
     @GetMapping(value = "/registration")
     public String registration(User user, Model model, HttpSession httpSession) {
         System.out.println("Session: "+httpSession.getAttribute("id"));
-        if (checkValidSession(httpSession)) return "redirect:/homepage";
+        if (!checkValidSession(httpSession)) return "redirect:/homepage";
         model.addAttribute("nextPage", "registration");
         return templatePath+"/registrationPage";
     }
 
     @PostMapping(value = "/registration")
     public String addNewPerson(@Valid User user, BindingResult bindingResult, HttpSession httpSession) {
-        if (checkValidSession(httpSession)) return "redirect:/homepage";
+        if (!checkValidSession(httpSession)) return "redirect:/homepage";
         System.out.println(user.toString());
         if (bindingResult.hasErrors())
             return "registrationPage";
@@ -48,14 +48,14 @@ public class UserController {
 
     @GetMapping(value = "/login")
     public String login(Model model, HttpSession httpSession) {
-        if (checkValidSession(httpSession)) return "redirect:/homepage";
+        if (!checkValidSession(httpSession)) return "redirect:/homepage";
         model.addAttribute("errText", "");
         return templatePath+"/loginPage";
     }
 
     @PostMapping(value = "/login")
     public String logUser(@RequestParam("username") String username, @RequestParam("password") String pw, Model model, HttpSession httpSession) {
-        if (checkValidSession(httpSession)) return "redirect:/homepage";
+        if (!checkValidSession(httpSession)) return "redirect:/homepage";
         User user = userRepository.login(username, pw);
         if (user == null) {
             model.addAttribute("errText", "Something went wrong during the authentication");

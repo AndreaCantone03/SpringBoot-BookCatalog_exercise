@@ -1,7 +1,6 @@
 package com.example.Lez08Exercise.Controllers;
 
 import com.example.Lez08Exercise.Models.Book;
-import com.example.Lez08Exercise.Models.User;
 import com.example.Lez08Exercise.Models.User_Book;
 import com.example.Lez08Exercise.Repository.BookRepository;
 import com.example.Lez08Exercise.Repository.UserBookRepository;
@@ -23,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -40,7 +41,7 @@ public class BookController {
 
     @RequestMapping("/")
     private String mainPage(Model model, HttpSession httpSession) {
-        if (httpSession.getAttribute("id") != null) return "redirect:/homepage";
+        if (httpSession.getAttribute("id") == null) return "redirect:/";
         model.addAttribute("allBooks", bookRepository.findAll());
         return templatePath+"/mainPage";
     }
@@ -50,9 +51,14 @@ public class BookController {
         return bookRepository.findAll();
     }
 
-    @RequestMapping("/alluserbook")
-    private @ResponseBody Iterable<User_Book> allUserBook() {
-        return userBookRepository.findAll();
+    @RequestMapping("/availablebooks")
+    private @ResponseBody Iterable<Book> allUserBook(HttpSession httpSession) {
+        List<User_Book> user_booksList = (List<User_Book>) userBookRepository.findAll();
+        List<Book> booksList = (List<Book>) bookRepository.findAll();
+        for (Book userBook: bookRepository.findAll()) {
+            if (userBookRepository.findByBook(userBook) != null) booksList.remove(userBook);
+        }
+        return booksList;
     }
 
     @RequestMapping("/mybooks")
@@ -60,13 +66,22 @@ public class BookController {
         if (httpSession.getAttribute("id") == null) {
             return "redirect:/";
         }
-        model.addAttribute("allBooks", bookRepository);
-        return templatePath+"myBooks";
+        Iterable<User_Book> user_books =  userBookRepository.findAll();
+        List<User_Book> user_booksList = (List<User_Book>) user_books;
+        ArrayList<Book> bookInUser_Book = new ArrayList<>();
+        for (User_Book userBook:user_booksList) {
+            if (userBook.getUser().getId() == httpSession.getAttribute("id")) {
+                bookInUser_Book.add(userBook.getBook());
+            }
+        }
+        System.out.println(bookInUser_Book.size());
+        model.addAttribute("allBooks", bookInUser_Book.toArray());
+        return templatePath+"/myBooks";
     }
 
     @GetMapping("/addbook")
     private String sendForm(Model model, HttpSession httpSession) {
-        if (httpSession.getAttribute("id") != null) return "redirect:/homepage";
+        if (httpSession.getAttribute("id") == null) return "redirect:/";
         return templatePath+"/addBook";
     }
 

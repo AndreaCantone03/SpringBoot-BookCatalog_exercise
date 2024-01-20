@@ -16,7 +16,7 @@ public class AccessController {
 
     @RequestMapping("/homepage")
     private String getHomePage(HttpSession httpSession) {
-//        if (httpSession.getAttribute("id") == null) return "redirect:/";
+        if (httpSession.getAttribute("id") == null) return "redirect:/";
         return mainTemplatePath+"/homePage";
     }
 }
